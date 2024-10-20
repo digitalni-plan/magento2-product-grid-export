@@ -131,8 +131,7 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
                     } elseif ($field == 'websites') {
                         $columnData = $this->getWebsiteName($document, $field);
                     } elseif (isset($columnsType[$field]) && $columnsType[$field] == 'select')  {
-                        // $columnData = $this->handleSelectField($document, $field);
-                        $columnData = (trim($document->getAttributeText($field))) ? trim($document->getAttributeText($field)) : $this->getColumnData($document, $field);  
+                        $columnData = $this->getCachedAttributeOptionText($field, $document, $this->getColumnData($document, $field));
                     } elseif (isset($columnsType[$field]) && $columnsType[$field] == 'multiselect')  {
                         $columnData = is_array($document->getAttributeText($field)) ? implode(',',$document->getAttributeText($field)) : $document->getAttributeText($field);
                     } else {
@@ -143,6 +142,14 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
             $fields)
         );
         return $rowData;
+    }
+
+    private function getCachedAttributeOptionText($attribute, $document, $optionId) {
+        if (isset($this->cachedAttributeOptions[$attribute][$optionId])) {
+            return $this->cachedAttributeOptions[$attribute][$optionId];
+        }
+        $this->cachedAttributeOptions[$attribute][$optionId] = (trim($document->getAttributeText($attribute))) ? trim($document->getAttributeText($attribute)) : $this->getColumnData($document, $attribute);
+        return $this->cachedAttributeOptions[$attribute][$optionId];
     }
 
     public function getRowData($document, $fields, $options): array{
@@ -160,26 +167,6 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
 
         return $value;
     }
-
-    /**
-     * 
-     * handler of select fields attribute
-     * 
-     * @param \Magento\Catalog\Model\Product $_productItem
-     * @param string $field
-     * 
-     * @return string $columnData
-     * 
-     */
-    protected function handleSelectField(\Magento\Catalog\Model\Product $_productItem, string $field):string {
-        if (trim($_productItem->getAttributeText($field))) {
-            $columnData = trim($_productItem->getAttributeText($field)); 
-        }  else {
-            $columnData = $this->getColumnData($_productItem, $field);
-        }
-        return (string) $columnData;
-    }
-
 
     /**
      * 
