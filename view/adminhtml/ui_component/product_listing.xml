@@ -2,7 +2,7 @@
 
 <listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <listingToolbar name="listing_top">
-        <exportButton class="Magento\Ui\Component\ExportButton">
+        <exportButton name="export_button" class="Magento\Ui\Component\ExportButton">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="selectProvider" xsi:type="string">
