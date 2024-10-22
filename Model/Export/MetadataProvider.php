@@ -131,11 +131,9 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
                     } elseif ($field == 'websites') {
                         $columnData = $this->getWebsiteName($document, $field);
                     } elseif (isset($columnsType[$field]) && $columnsType[$field] == 'select')  {
-                        $columnData = $document->getData($field);
-//                        $columnData = $this->getCachedAttributeOptionText($field, $document, $this->getColumnData($document, $field));
+                        $columnData = $this->getCachedAttributeOptionText($field, $document, $this->getColumnData($document, $field));
                     } elseif (isset($columnsType[$field]) && $columnsType[$field] == 'multiselect')  {
-//                        $columnData = is_array($document->getAttributeText($field)) ? implode(',',$document->getAttributeText($field)) : $document->getAttributeText($field);
-                        $columnData = $document->getData($field);
+                        $columnData = is_array($document->getAttributeText($field)) ? implode(',',$document->getAttributeText($field)) : $document->getAttributeText($field);
                     } else {
                         $columnData = $this->getColumnData($document, $field);
                     }

@@ -18,9 +18,6 @@
                             <item name="value" xsi:type="string">xml</item>
                             <item name="label" xsi:type="string" translate="true">Excel XML</item>
                             <item name="url" xsi:type="string">productgridexport/export/gridToXml</item>
-                            <item name="visibility" xsi:type="boolean">false</item>
-                            <item name="visible" xsi:type="boolean">false</item>
-                            <item name="visible" xsi:type="boolean">false</item>
                         </item>
 <!--                        <item name="xls" xsi:type="array">-->
 <!--                            <item name="value" xsi:type="string">xls</item>-->
