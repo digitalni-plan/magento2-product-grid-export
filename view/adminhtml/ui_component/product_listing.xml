@@ -2,7 +2,7 @@
 
 <listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <listingToolbar name="listing_top">
-        <exportButton class="Magento\Ui\Component\ExportButton">
+        <exportButton name="export_button" class="Magento\Ui\Component\ExportButton">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="selectProvider" xsi:type="string">
@@ -18,12 +18,15 @@
                             <item name="value" xsi:type="string">xml</item>
                             <item name="label" xsi:type="string" translate="true">Excel XML</item>
                             <item name="url" xsi:type="string">productgridexport/export/gridToXml</item>
+                            <item name="visibility" xsi:type="boolean">false</item>
+                            <item name="visible" xsi:type="boolean">false</item>
+                            <item name="visible" xsi:type="boolean">false</item>
                         </item>
-                        <item name="xls" xsi:type="array">
-                            <item name="value" xsi:type="string">xls</item>
-                            <item name="label" xsi:type="string" translate="true">Excel XLS</item>
-                            <item name="url" xsi:type="string">productgridexport/export/gridToXls</item>
-                        </item>
+<!--                        <item name="xls" xsi:type="array">-->
+<!--                            <item name="value" xsi:type="string">xls</item>-->
+<!--                            <item name="label" xsi:type="string" translate="true">Excel XLS</item>-->
+<!--                            <item name="url" xsi:type="string">productgridexport/export/gridToXls</item>-->
+<!--                        </item>-->
                     </item>
                 </item>
             </argument>

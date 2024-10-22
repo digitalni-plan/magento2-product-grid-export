@@ -33,8 +33,8 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
      * @param ResolverInterface $localeResolver
      * @param string $dateFormat
      * @param BookmarkManagement $bookmarkManagement
-     * @param AttributeSetRepository $attributeSetRepository 
-     * @param WebsiteRepository $websiteRepository  
+     * @param AttributeSetRepository $attributeSetRepository
+     * @param WebsiteRepository $websiteRepository
      * @param array $data
      */
     public function __construct(
@@ -43,7 +43,7 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
         ResolverInterface $localeResolver,
         BookmarkManagement $bookmarkManagement,
         AttributeSetRepository $attributeSetRepository,
-        WebsiteRepository $websiteRepository,  
+        WebsiteRepository $websiteRepository,
         $dateFormat = 'M j, Y H:i:s A',
         array $data = [])
     {
@@ -60,7 +60,7 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
         // Remove all invisible columns as well as ids, and actions columns.
         $columns = array_filter($config['current']['columns'], fn($config, $key) => $config['visible'] && !in_array($key, ['ids', 'actions']), ARRAY_FILTER_USE_BOTH);;
         // Sort by position in grid.
-        uksort($columns, fn($a, $b) => $config['current']['positions'][$a] <=> $config['current']['positions'][$b]);
+        uksort($columns, fn($a, $b) => @$config['current']['positions'][$a] <=> @$config['current']['positions'][$b]);
 
         return array_keys($columns);
     }
@@ -106,7 +106,7 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
         foreach ($activeColumns as $columnName) {
             $column = $components[$columnName] ?? null;
             if (isset($column) && $column->getData('config/label') && $column->getData('config/dataType') !== 'actions') {
-                $this->columnsType[$column->getName()] = $column->getData('config/dataType');            
+                $this->columnsType[$column->getName()] = $column->getData('config/dataType');
             }
         }
         return $this->columnsType;
@@ -114,13 +114,13 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
 
 
     /**
-     * 
+     *
      * @param \Magento\Catalog\Model\Product $document
      * @param string[] $fields
      * @param string[] $columnsType
-     * 
-     * @return array 
-     * 
+     *
+     * @return array
+     *
      */
     public function getRowDataBasedOnColumnType($document, $fields, $columnsType, $options): array{
         $rowData = array_values(
@@ -131,18 +131,27 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
                     } elseif ($field == 'websites') {
                         $columnData = $this->getWebsiteName($document, $field);
                     } elseif (isset($columnsType[$field]) && $columnsType[$field] == 'select')  {
-                        // $columnData = $this->handleSelectField($document, $field);
-                        $columnData = (trim($document->getAttributeText($field))) ? trim($document->getAttributeText($field)) : $this->getColumnData($document, $field);  
+                        $columnData = $document->getData($field);
+//                        $columnData = $this->getCachedAttributeOptionText($field, $document, $this->getColumnData($document, $field));
                     } elseif (isset($columnsType[$field]) && $columnsType[$field] == 'multiselect')  {
-                        $columnData = is_array($document->getAttributeText($field)) ? implode(',',$document->getAttributeText($field)) : $document->getAttributeText($field);
+//                        $columnData = is_array($document->getAttributeText($field)) ? implode(',',$document->getAttributeText($field)) : $document->getAttributeText($field);
+                        $columnData = $document->getData($field);
                     } else {
                         $columnData = $this->getColumnData($document, $field);
                     }
                     return $columnData;
-                }, 
+                },
             $fields)
         );
         return $rowData;
+    }
+
+    private function getCachedAttributeOptionText($attribute, $document, $optionId) {
+        if (isset($this->cachedAttributeOptions[$attribute][$optionId])) {
+            return $this->cachedAttributeOptions[$attribute][$optionId];
+        }
+        $this->cachedAttributeOptions[$attribute][$optionId] = (trim($document->getAttributeText($attribute))) ? trim($document->getAttributeText($attribute)) : $this->getColumnData($document, $attribute);
+        return $this->cachedAttributeOptions[$attribute][$optionId];
     }
 
     public function getRowData($document, $fields, $options): array{
@@ -162,32 +171,12 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
     }
 
     /**
-     * 
-     * handler of select fields attribute
-     * 
+     *
      * @param \Magento\Catalog\Model\Product $_productItem
      * @param string $field
-     * 
-     * @return string $columnData
-     * 
-     */
-    protected function handleSelectField(\Magento\Catalog\Model\Product $_productItem, string $field):string {
-        if (trim($_productItem->getAttributeText($field))) {
-            $columnData = trim($_productItem->getAttributeText($field)); 
-        }  else {
-            $columnData = $this->getColumnData($_productItem, $field);
-        }
-        return (string) $columnData;
-    }
-
-
-    /**
-     * 
-     * @param \Magento\Catalog\Model\Product $_productItem
-     * @param string $field
-     * 
+     *
      * @return string $attributeSetName
-     * 
+     *
      */
     protected function getAttributeSetName(\Magento\Catalog\Model\Product $_productItem, string $field):string {
         $attributeSetId = $_productItem->getData($field);
@@ -198,12 +187,12 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
     }
 
     /**
-     * 
+     *
      * @param \Magento\Catalog\Model\Product $_productItem
      * @param string $field
-     * 
+     *
      * @return string $websiteName
-     * 
+     *
      */
     protected function getWebsiteName(\Magento\Catalog\Model\Product $_productItem, string $field):string {
         $websiteId = $this->getColumnData($_productItem,$field);
