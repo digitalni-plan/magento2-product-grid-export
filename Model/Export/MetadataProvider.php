@@ -12,31 +12,11 @@ use Magento\Store\Api\WebsiteRepositoryInterface as WebsiteRepository;
 
 class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
 {
-    /**
-     * @var BookmarkManagement
-     */
     protected $_bookmarkManagement;
-
     protected $attributeSetRepository;
-
     protected $websiteRepository;
-
-    /**
-     * @var array $columnsType
-     */
     protected $columnsType;
 
-    /**
-     * MetadataProvider constructor.
-     * @param Filter $filter
-     * @param TimezoneInterface $localeDate
-     * @param ResolverInterface $localeResolver
-     * @param string $dateFormat
-     * @param BookmarkManagement $bookmarkManagement
-     * @param AttributeSetRepository $attributeSetRepository
-     * @param WebsiteRepository $websiteRepository
-     * @param array $data
-     */
     public function __construct(
         Filter $filter,
         TimezoneInterface $localeDate,
@@ -52,8 +32,6 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
         $this->attributeSetRepository = $attributeSetRepository;
         $this->websiteRepository = $websiteRepository;
     }
-
-
 
     protected function getActiveColumns($component){
         $bookmark = $this->_bookmarkManagement->getByIdentifierNamespace('current', $component->getName());
@@ -151,6 +129,15 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
                         $columnData = $this->getAttributeSetName($document, $field);
                     } elseif ($field == 'websites') {
                         $columnData = $this->getWebsiteName($document, $field);
+                    } elseif ($field == 'quantity_per_source') {
+                        $columnData = [];
+                        $quantitySources = $document->getData($field);
+                        if (is_array($quantitySources)) {
+                            foreach ($quantitySources as $quantitySource) {
+                                $columnData[] = $quantitySource['source_name'] . ': ' . $quantitySource['qty'];
+                            }
+                        }
+                        $columnData = implode(PHP_EOL, $columnData);
                     } elseif (isset($columnsType[$field]) && $columnsType[$field] == 'select')  {
                         $columnData = $this->getCachedAttributeOptionText($field, $document, $this->getColumnData($document, $field));
                     } elseif (isset($columnsType[$field]) && $columnsType[$field] == 'multiselect')  {
