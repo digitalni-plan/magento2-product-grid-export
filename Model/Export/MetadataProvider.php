@@ -138,6 +138,8 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
                             }
                         }
                         $columnData = implode(PHP_EOL, $columnData);
+                    } elseif ($field == 'category_id') {
+                        $columnData = $this->getColumnData($document, $field);
                     } elseif (isset($columnsType[$field]) && $columnsType[$field] == 'select')  {
                         $columnData = $this->getCachedAttributeOptionText($field, $document, $this->getColumnData($document, $field));
                     } elseif (isset($columnsType[$field]) && $columnsType[$field] == 'multiselect')  {
