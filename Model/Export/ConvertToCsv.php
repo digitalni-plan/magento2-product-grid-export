@@ -25,9 +25,9 @@ class ConvertToCsv extends \Magento\Ui\Model\Export\ConvertToCsv
         $fields = $this->metadataProvider->getFields($component);
 
         $this->directory->create('export');
-//        $stream = $this->directory->openFile($file, 'w+');
-//        $stream->lock();
-//        $stream->writeCsv($this->metadataProvider->getHeaders($component));
+        $stream = $this->directory->openFile($file, 'w+');
+        $stream->lock();
+        $stream->writeCsv($this->metadataProvider->getHeaders($component));
         $columnsWithType= $this->metadataProvider->getColumnsWithDataType($component);
         $page = 1;
 
@@ -41,13 +41,11 @@ class ConvertToCsv extends \Magento\Ui\Model\Export\ConvertToCsv
         foreach ($items as $item) {
             // @TODO We can't convert all column types. Do check before
             // $this->metadataProvider->convertDate($item, $component->getName());
-//            $stream->writeCsv($this->metadataProvider->getRowDataBasedOnColumnType($item, $fields, $columnsWithType, []));
-            print_r($this->metadataProvider->getRowDataBasedOnColumnType($item, $fields, $columnsWithType, []));
+            $stream->writeCsv($this->metadataProvider->getRowDataBasedOnColumnType($item, $fields, $columnsWithType, []));
         }
 
-        die;
-//        $stream->unlock();
-//        $stream->close();
+        $stream->unlock();
+        $stream->close();
 
         return [
             'type' => 'filename',
