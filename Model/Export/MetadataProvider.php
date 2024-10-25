@@ -128,7 +128,7 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
                     if ($field == 'attribute_set_id') {
                         $columnData = $this->getAttributeSetName($document, $field);
                     } elseif ($field == 'websites') {
-                        $columnData = $this->getWebsiteName($document, $field);
+                        $columnData = $this->getColumnData($document, $field);
                     } elseif ($field == 'quantity_per_source') {
                         $columnData = [];
                         $quantitySources = $document->getData($field);
@@ -138,6 +138,10 @@ class MetadataProvider extends \Magento\Ui\Model\Export\MetadataProvider
                             }
                         }
                         $columnData = implode(PHP_EOL, $columnData);
+                    } elseif ($field == 'price') {
+                        $columnData = $this->getColumnData($document, $field) ?: '';
+                        $columnData = str_replace('€', '', $columnData);
+                        $columnData = filter_var($columnData, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
                     } elseif ($field == 'category_id') {
                         $columnData = $this->getColumnData($document, $field);
                     } elseif (isset($columnsType[$field]) && $columnsType[$field] == 'select')  {

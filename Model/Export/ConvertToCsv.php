@@ -39,7 +39,8 @@ class ConvertToCsv extends \Magento\Ui\Model\Export\ConvertToCsv
 
         $items = LazySearchResultIterator::getGenerator($searchResult);
         foreach ($items as $item) {
-            $this->metadataProvider->convertDate($item, $component->getName());
+            // @TODO We can't convert all column types. Do check before
+            // $this->metadataProvider->convertDate($item, $component->getName());
             $stream->writeCsv($this->metadataProvider->getRowDataBasedOnColumnType($item, $fields, $columnsWithType, []));
         }
 
